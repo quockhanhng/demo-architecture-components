@@ -1,4 +1,4 @@
-package com.khanhnq.demo_architecture_components.ui
+package com.khanhnq.demo_architecture_components.ui.home
 
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.item_launch.view.*
 class LaunchesAdapter : ListAdapter<Launch, LaunchesAdapter.ViewHolder>(
     LaunchDiffCallback()
 ) {
-    private var onItemClick: (Launch) -> Unit = { _ -> }
+    var onItemClick: (String) -> Unit = { _ -> }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView =
@@ -25,14 +25,14 @@ class LaunchesAdapter : ListAdapter<Launch, LaunchesAdapter.ViewHolder>(
         holder.bindData(getItem(position))
     }
 
-    class ViewHolder(itemView: View, onItemClick: (Launch) -> Unit) :
+    class ViewHolder(itemView: View, onItemClick: (String) -> Unit) :
         RecyclerView.ViewHolder(itemView) {
 
         private var itemData: Launch? = null
 
         init {
             itemView.setOnClickListener {
-                itemData?.let { onItemClick(it) }
+                itemData?.let { onItemClick(it.id) }
             }
         }
 

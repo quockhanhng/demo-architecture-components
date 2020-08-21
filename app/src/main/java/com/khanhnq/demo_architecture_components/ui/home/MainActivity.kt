@@ -1,12 +1,13 @@
-package com.khanhnq.demo_architecture_components.ui
+package com.khanhnq.demo_architecture_components.ui.home
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 import com.khanhnq.demo_architecture_components.R
+import com.khanhnq.demo_architecture_components.ui.detail.DetailFragment
+import com.khanhnq.demo_architecture_components.ui.detail.DetailFragment.Companion.DETAIL_TAG
 import com.khanhnq.demo_architecture_components.utils.Injector
 import com.khanhnq.demo_architecture_components.utils.Result
 import com.khanhnq.demo_architecture_components.utils.toast
@@ -31,7 +32,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUpRecyclerView() {
         adapter.stateRestorationPolicy = PREVENT_WHEN_EMPTY
-        recyclerView.adapter = adapter
+        recyclerView.adapter = adapter.apply {
+            onItemClick = { launchId -> goToDetail(launchId) }
+        }
+    }
+
+    private fun goToDetail(id: String) {
+        supportFragmentManager.beginTransaction().apply {
+            add(R.id.root, DetailFragment.newInstance(id), DETAIL_TAG)
+            addToBackStack(null)
+            commit()
+        }
     }
 
     private fun observeData() = with(viewModel) {

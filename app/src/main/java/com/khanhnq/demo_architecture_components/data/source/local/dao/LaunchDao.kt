@@ -11,7 +11,7 @@ import com.khanhnq.demo_architecture_components.utils.getDistinct
 @Dao
 interface LaunchDao {
 
-    @Query("SELECT * FROM launch")
+    @Query("SELECT * FROM launch ORDER BY name")
     fun getAllLaunches(): LiveData<List<Launch>>
 
     @Query("SELECT * FROM launch WHERE id = :id")
