@@ -8,11 +8,9 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.khanhnq.demo_architecture_components.R
-import com.khanhnq.demo_architecture_components.data.model.Launch
+import com.khanhnq.demo_architecture_components.model.LaunchItem
 import com.khanhnq.demo_architecture_components.utils.Injector
-import com.khanhnq.demo_architecture_components.utils.Result
 import com.khanhnq.demo_architecture_components.utils.toast
-import com.khanhnq.demo_architecture_components.viewmodel.LaunchDetailViewModel
 import kotlinx.android.synthetic.main.fragment_detail.*
 
 class DetailFragment : Fragment() {
@@ -36,22 +34,25 @@ class DetailFragment : Fragment() {
         observeData()
     }
 
-    private fun observeData() {
-        viewModel.launch.observe(viewLifecycleOwner, { result ->
-            when (result.status) {
-                Result.Status.SUCCESS -> {
-                    progressBar.visibility = View.GONE
-                    result.data?.let { bindData(it) }
-                }
-
-                Result.Status.ERROR -> result?.message?.let { context?.toast(it) }
-
-                Result.Status.LOADING -> progressBar.visibility = View.VISIBLE
+    private fun observeData() = with(viewModel) {
+        isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                progressBar.visibility = View.VISIBLE
+            } else {
+                progressBar.visibility = View.GONE
             }
-        })
+        }
+
+        launch.observe(viewLifecycleOwner) { launch ->
+            bindData(launch)
+        }
+
+        error.observe(viewLifecycleOwner) { msg ->
+            context?.toast(msg)
+        }
     }
 
-    private fun bindData(launch: Launch) {
+    private fun bindData(launch: LaunchItem) {
         textName.text = launch.name
         textDetails.text = launch.details
     }

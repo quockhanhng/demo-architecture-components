@@ -8,10 +8,9 @@ import androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.
 import com.khanhnq.demo_architecture_components.R
 import com.khanhnq.demo_architecture_components.ui.detail.DetailFragment
 import com.khanhnq.demo_architecture_components.ui.detail.DetailFragment.Companion.DETAIL_TAG
+import com.khanhnq.demo_architecture_components.ui.home.adapter.LaunchesAdapter
 import com.khanhnq.demo_architecture_components.utils.Injector
-import com.khanhnq.demo_architecture_components.utils.Result
 import com.khanhnq.demo_architecture_components.utils.toast
-import com.khanhnq.demo_architecture_components.viewmodel.LaunchesViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -46,15 +45,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeData() = with(viewModel) {
-        launches.observe(this@MainActivity, {
-            when (it?.status) {
-                Result.Status.SUCCESS -> {
-                    progressBar.visibility = View.GONE
-                    if (!it.data.isNullOrEmpty()) adapter.submitList(it.data)
-                }
-                Result.Status.ERROR -> it.message?.let { msg -> this@MainActivity.toast(msg) }
-                Result.Status.LOADING -> progressBar.visibility = View.VISIBLE
+        
+        isLoading.observe(this@MainActivity) { isLoading ->
+            if (isLoading) {
+                progressBar.visibility = View.VISIBLE
+            } else {
+                progressBar.visibility = View.GONE
             }
-        })
+        }
+
+        launches.observe(this@MainActivity) { list ->
+            adapter.submitList(list)
+        }
+
+        error.observe(this@MainActivity) { msg ->
+            toast(msg)
+        }
     }
 }
